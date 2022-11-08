@@ -1,0 +1,149 @@
+{% extends 'InvoiceEngineApp/base.html' %}
+{% load custom_tags %}
+
+{% block navbar %}
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'contract_create' company_id %}">Create new contract</a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'tenancy_list'%}">Company list</a>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div class="card shadow p-3 mb-5 bg-body rounded">
+        <div class="card-body">
+            <div class="row">
+                <div class="col">
+                    <div class="table-responsive">
+                        <form>
+                            <table class="table table-borderless">
+                                <thead>
+                                    <tr style="border-bottom: 3px solid lightgray">
+                                        <td>
+                                            <p style="font-size: 20px">Name(s)</p>
+                                            {{ form.name }}
+                                        </td>
+                                        <td>
+                                            <p style="font-size: 20px">Address(es)</p>
+                                            {{ form.address }}
+                                        </td>
+                                        <td>
+                                            <p style="font-size: 20px">Contract type</p>
+                                            {{ form.contract_type }}
+                                        </td>
+                                        <td>
+                                            <p style="font-size: 20px">Period</p>
+                                            {{ form.period }}
+                                        </td>
+                                        <td>
+                                            <p style="font-size: 20px">Start date</p>
+                                            {{ form.start_date }}
+                                        </td>
+                                        <td>
+                                            <p style="font-size: 20px">End date</p>
+                                            {{ form.end_date }}
+                                        </td>
+                                        <td>
+                                            <p style="font-size: 20px">Next invoicing</p>
+                                            {{ form.next_invoice_date }}
+                                        </td>
+                                        <td style="text-align: right">
+                                            <p style="font-size: 20px">Total amount</p>
+                                            {{ form.total_amount }}
+                                        </td>
+                                        <td style="text-align: right">
+                                            <p style="font-size: 20px">Balance</p>
+                                            {{ form.balance }}
+                                        </td>
+                                        <td style="text-align: center">
+                                            <button type="submit" class="btn btn-primary">Search</button>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for object in page_obj %}
+                                        {% for person in object.get_contract_persons %}
+                                            <tr>
+                                                <td>{{ person.name }}: {{ person.percentage_of_total }}%</td>
+                                                <td>{{ person.address }} - {{ person.city }}</td>
+                                                {% if forloop.first %}
+                                                    <td>{{ object.contract_type }}</td>
+                                                    <td>{{ object.get_period }}</td>
+                                                    <td>{{ object.start_date }}</td>
+                                                    <td>{{ object.end_date }}</td>
+                                                    <td>{{ object.date_next_prolongation }}</td>
+                                                    <td style="text-align: right">€{{ object.total_amount }}</td>
+                                                    <td style="text-align: right">€{{ object.balance }}</td>
+                                                {% endif %}
+                                                {% if forloop.last %}
+                                                    {% if not forloop.first %}
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    {% endif %}
+                                                    <td style="text-align: center"><a class="link-primary" href="{% url 'contract_details' company_id object.contract_id %}">Details</a></td>
+                                                {% endif %}
+                                            </tr>
+                                        {% empty %}
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td>{{ object.contract_type }}</td>
+                                                <td>{{ object.get_period }}</td>
+                                                <td>{{ object.start_date }}</td>
+                                                <td>{{ object.end_date }}</td>
+                                                <td>{{ object.date_next_prolongation }}</td>
+                                                <td style="text-align: right">€{{ object.total_amount }}</td>
+                                                <td style="text-align: right">€{{ object.balance }}</td>
+                                                <td style="text-align: center"><a class="link-primary" href="{% url 'contract_details' company_id object.contract_id %}">Details</a></td>
+                                            </tr>
+                                        {% endfor %}
+                                        <tr>
+                                            <td><hr/></td>
+                                            <td><hr/></td>
+                                            <td><hr/></td>
+                                            <td><hr/></td>
+                                            <td><hr/></td>
+                                            <td><hr/></td>
+                                            <td><hr/></td>
+                                            <td><hr/></td>
+                                            <td><hr/></td>
+                                            <td><hr/></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Pagination back and next links #}
+    <div class="col">
+        <div class="pagination" style="padding-left: 15px; padding-bottom: 15px">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?{% param_replace page=1 %}">&laquo; first</a>
+                    <a href="?{% param_replace page=page_obj.previous_page_number %}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?{% param_replace page=page_obj.next_page_number %}">next</a>
+                    <a href="?{% param_replace page=page_obj.paginator.num_pages %}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+{% endblock %}

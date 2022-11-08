@@ -1,0 +1,16 @@
+{% extends 'InvoiceEngineApp/base.html' %}
+
+{% block navbar %}
+
+{% endblock %}
+
+{% block content %}
+    <div class="col">
+        <div class="card shadow p-3 mb-5 bg-body rounded">
+            <div class="card-body">
+                <p style="text-align: center;margin: auto">I am a profile page</p>
+                <p style="text-align: center;margin: auto"><a href="{% url 'tenancy_list' %}" class="btn btn-primary" role="button">Available Companies</a></p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

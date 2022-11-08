@@ -1,0 +1,63 @@
+{% extends 'InvoiceEngineApp/base.html' %}
+
+{% block navbar %}
+
+{% endblock %}
+
+{% block content %}
+    <div class="col">
+        <!-- Display objects -->
+        {% for object in page_obj %}
+            <div class="card shadow p-3 mb-5 bg-body rounded" >
+                <div class="card-body">
+                    <h5 class="card-title"> {{ object.name }}</h5>
+                    <ul class="nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'contract_type_list' object.company_id %}">Contract types</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'base_component_list' object.company_id %}">Base components</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'vat_rate_list' object.company_id %}">VAT rates</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'contract_list' object.company_id %}">Contracts</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'invoice_list' object.company_id %}">Invoices</a>
+                        </li>
+                    </ul>
+                    <a class="btn btn-primary" href="{% url 'tenancy_details' object.company_id %}">Details</a>
+                    <a class="btn btn-primary"href="{% url 'tenancy_update' object.company_id %}">Update</a>
+                    <a class="btn btn-dark" href="{% url 'invoice_contracts' object.company_id %}">Invoice contracts</a>
+                    <a class="btn btn-outline-primary" href="{% url 'export_glposts' object.company_id %}">Export GL</a>
+                    <a class="btn btn-outline-primary" href="{% url 'export_collections' object.company_id %}">Export Collections</a>
+                    <a class="btn btn-outline-primary" href="{% url 'export_invoices' object.company_id %}">Export Invoices</a>
+                </div>
+            </div>
+        {% empty %}
+            <p>No Companies registered</p>
+        {% endfor %}
+
+        <div class="col">
+            <div class="pagination" style="padding-left: 15px; padding-bottom: 15px">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1">&laquo; first</a>
+                        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                    {% endif %}
+
+                    <span class="current">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                    </span>
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">next</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,190 @@
+{% extends 'InvoiceEngineApp/base.html' %}
+
+{% block navbar %}
+    <li class="nav-item">
+        <a class="nav-link" aria-current="page" href="{% url list_page.0 list_page.1 %}">Invoice list</a>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {# General information section #}
+        <h2 style="padding: 15px">General information</h2>
+        <div class="card shadow p-3 mb-5 bg-body rounded">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td>Invoice number</td>
+                                        <td>{{ object.invoice_number }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Description</td>
+                                        <td>{{ object.description }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Company</td>
+                                        <td>{{ object.tenancy }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Contract</td>
+                                        <td><a class="link-primary" href="{% url 'contract_details' object.tenancy_id object.contract_id %}">{{ object.contract }}</a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td>Date</td>
+                                        <td>{{ object.date }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Expiration Date</td>
+                                        <td>{{ object.expiration_date }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>General ledger account</td>
+                                        <td>{{ object.gl_account }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>External Customer ID</td>
+                                        <td>{{ object.external_customer_id }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td>Balance</td>
+                                        <td style="text-align: right">€{{object.balance}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Base Amount</td>
+                                        <td style="text-align: right">€{{object.base_amount}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>VAT Amount</td>
+                                        <td style="text-align: right">€{{object.vat_amount}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total Amount</td>
+                                        <td style="text-align: right">€{{object.total_amount}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Invoice line list section #}
+        <h2 style="padding: 15px">Invoice lines</h2>
+        <div class="card shadow p-3 mb-5 bg-body rounded">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="table-responsive">
+                            <table class="table table-borderless">
+                                {% for invoice_line in object.get_invoice_lines %}
+                                    {% if forloop.first %}
+                                        <thead>
+                                            <tr class="border-bottom">
+                                                <td><p style="font-size: 20px">Description</p></td>
+                                                <td><p style="font-size: 20px">Component</p></td>
+                                                <td><p style="font-size: 20px; text-align: right">Vat type</p></td>
+                                                <td><p style="font-size: 20px; text-align: right">Unit ID</p></td>
+                                                <td><p style="font-size: 20px; text-align: right"># Units</p></td>
+                                                <td><p style="font-size: 20px; text-align: right">Unit price</p></td>
+                                                <td><p style="font-size: 20px; text-align: right">Base price</p></td>
+                                                <td><p style="font-size: 20px; text-align: right">VAT</p></td>
+                                                <td><p style="font-size: 20px; text-align: right">Total</p></td>
+                                                <td></td>
+                                            </tr>
+                                        </thead>
+                                    {% endif %}
+                                    <tbody>
+                                        <tr>
+                                            <td>{{ invoice_line.description }}</td>
+                                            <td>{{ invoice_line.component }}</td>
+                                            <td style="text-align: right">{{ invoice_line.vat_type }}</td>
+                                            <td style="text-align: right">{{ invoice_line.unit_id }}</td>
+                                            <td style="text-align: right">{{ invoice_line.number_of_units }}</td>
+                                            <td style="text-align: right">€{{ invoice_line.unit_price }}</td>
+                                            <td style="text-align: right">€{{ invoice_line.base_amount }}</td>
+                                            <td style="text-align: right">€{{ invoice_line.vat_amount }}</td>
+                                            <td style="text-align: right">€{{ invoice_line.total_amount }}</td>
+                                        </tr>
+                                    </tbody>
+                                {% empty %}
+                                    <h5>No registered invoice lines</h5>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Collections list section #}
+        <h2 style="padding: 15px">Collections</h2>
+        <div class="card shadow p-3 mb-5 bg-body rounded">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="table-responsive">
+                            <table class="table table-borderless">
+                                {% for collection in object.get_collections %}
+                                    {% if forloop.first %}
+                                        <thead>
+                                            <tr class="border-bottom">
+                                                <td><p style="font-size: 20px">Name</p></td>
+                                                <td><p style="font-size: 20px">Address</p></td>
+                                                <td><p style="font-size: 20px">City</p></td>
+                                                <td><p style="font-size: 20px">Email</p></td>
+                                                <td><p style="font-size: 20px">Phone</p></td>
+                                                <td><p style="font-size: 20px">Method</p></td>
+                                                <td><p style="font-size: 20px">IBAN</p></td>
+                                                <td><p style="font-size: 20px; text-align: right">Mandate</p></td>
+                                                <td><p style="font-size: 20px; text-align: right">Day</p></td>
+                                                <td><p style="font-size: 20px; text-align: right">Amount</p></td>
+                                                <td></td>
+                                            </tr>
+                                        </thead>
+                                    {% endif %}
+                                    <tbody>
+                                        <tr>
+                                            <td>{{ collection.contract_person.name }}</td>
+                                            <td>{{ collection.contract_person.address }}</td>
+                                            <td>{{ collection.contract_person.city }}</td>
+                                            <td>{{ collection.contract_person.email }}</td>
+                                            <td>{{ collection.contract_person.phone }}</td>
+                                            <td>{{ collection.payment_method }}</td>
+                                            <td>{{ collection.iban }}</td>
+                                            <td style="text-align: right">{{ collection.mandate }}</td>
+                                            <td style="text-align: right">{{ collection.payment_day }}</td>
+                                            <td style="text-align: right">€{{ collection.amount }}</td>
+                                        </tr>
+                                    </tbody>
+                                {% empty %}
+                                    <h5>No registered collections</h5>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

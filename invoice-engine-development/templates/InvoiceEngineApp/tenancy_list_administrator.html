@@ -1,0 +1,41 @@
+{% extends 'InvoiceEngineApp/base.html' %}
+
+{% block navbar %}
+    <a class="nav-link" href="{% url 'tenancy_create' %}">Register new company</a>
+{% endblock %}
+
+{% block content %}
+    <div class="col">
+        <!-- Display objects -->
+        {% for object in page_obj %}
+            <div class="card shadow p-3 mb-5 bg-body rounded" >
+                <div class="card-body">
+                    <h5 class="card-title"> {{ object.name }}</h5>
+                    <a class="btn btn-primary" href="{% url 'tenancy_details' object.company_id %}">Details</a>
+                    <a class="btn btn-primary"href="{% url 'tenancy_update' object.company_id %}">Update</a>
+                    <a class="btn btn-primary"href="{% url 'tenancy_delete' object.company_id %}">Delete</a>
+                </div>
+            </div>
+        {% empty %}
+            <p>No objects yet</p>
+        {% endfor %}
+    </div>
+
+    <div class="pagination" style="padding-left: 15px; padding-bottom: 15px>
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+{% endblock %}

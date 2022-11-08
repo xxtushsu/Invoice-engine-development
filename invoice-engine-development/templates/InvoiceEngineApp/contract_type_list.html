@@ -1,0 +1,76 @@
+{% extends 'InvoiceEngineApp/base.html' %}
+
+{% block navbar %}
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'contract_type_create' company_id %}">Create new contract type</a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'tenancy_list' %}">Company list</a>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div class="card shadow p-3 mb-5 bg-body rounded">
+        <div class="card-body">
+            <div class="row">
+                <div class="col">
+                    <div class="table-responsive">
+                        <table class="table table-borderless">
+                            {% for object in page_obj %}
+                                {% if forloop.first %}
+                                    <thead>
+                                        <tr class="border-bottom">
+                                            <td><p style="font-size: 20px; text-align: right">Code</p></td>
+                                            <td><p style="font-size: 20px">Description</p></td>
+                                            <td><p style="font-size: 20px">General ledger debit</p></td>
+                                            <td><p style="font-size: 20px">General ledger credit</p></td>
+                                            <td></td>
+                                        </tr>
+                                    </thead>
+                                {% endif %}
+                                <tbody>
+                                    <tr>
+                                        <td style="text-align: right">{{ object.code }}</td>
+                                        <td>{{ object.description }}</td>
+                                        <td>{{ object.gl_debit }}</td>
+                                        <td>{{ object.gl_credit }}</td>
+                                        <td style="text-align: center">
+                                            {% if object.can_update_or_delete %}
+                                                <a class="link-primary" href="{% url 'contract_type_update' company_id object.contract_type_id %}">Update</a>
+                                                <a class="link-primary" href="{% url 'contract_type_delete' company_id object.contract_type_id %}">Delete</a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            {% empty %}
+                                <h5>No registered contract types</h5>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Pagination back and next links #}
+    <div class="col">
+        <div class="pagination" style="padding-left: 15px; padding-bottom: 15px">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">&laquo; first</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+{% endblock %}

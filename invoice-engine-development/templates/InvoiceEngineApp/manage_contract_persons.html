@@ -1,0 +1,169 @@
+{% extends 'InvoiceEngineApp/base.html' %}
+{% load static %}
+
+{% block navbar %}
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'contract_details' company_id contract_id%}">Contract</a>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div class="col">
+        <div class="card shadow p-3 mb-5 bg-body rounded">
+            <div class="card-body">
+                <form method="post">
+                    <table class="table table-borderless">
+                        <tbody>
+                            {% csrf_token %}
+                            {{ formset.management_form }}
+                            {{ formset.non_form_errors }}
+                            {# Need to load the id to give it back to the view #}
+                            {% for form in formset %}
+                                <td>
+                                    {{ form.contract_person_id.errors }}
+                                    {{ form.contract_person_id }}
+                                </td>
+                            {% endfor %}
+                            <tr>
+                                <td></td>
+                                {% for form in formset %}
+                                    <td>Person {{ forloop.counter }}</td>
+                                    {{ form.non_field_errors }}
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td>Name</td>
+                                {% for form in formset %}
+                                    <td id="form_name">
+                                        {{ form.name.errors }}
+                                        {{ form.name }}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td>Address</td>
+                                {% for form in formset %}
+                                    <td>
+                                        {{ form.address.errors }}
+                                        {{ form.address }}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td>City</td>
+                                {% for form in formset %}
+                                    <td>
+                                        {{ form.city.errors }}
+                                        {{ form.city }}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td>Payment method</td>
+                                {% for form in formset %}
+                                    <td>
+                                        {{ form.payment_method.errors }}
+                                        {{ form.payment_method }}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td>IBAN</td>
+                                {% for form in formset %}
+                                    <td>
+                                        {{ form.iban.errors }}
+                                        {{ form.iban }}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td>Mandate</td>
+                                {% for form in formset %}
+                                    <td>
+                                        {{ form.mandate.errors }}
+                                        {{ form.mandate }}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td>Email</td>
+                                {% for form in formset %}
+                                    <td>
+                                        {{ form.email.errors }}
+                                        {{ form.email }}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td>Phone</td>
+                                {% for form in formset %}
+                                    <td>
+                                        {{ form.phone.errors }}
+                                        {{ form.phone }}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td>Percentage</td>
+                                {% for form in formset %}
+                                    <td>
+                                        {{ form.percentage_of_total.errors }}
+                                        {{ form.percentage_of_total }}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td>Start date</td>
+                                {% for form in formset %}
+                                    <td>
+                                        {{ form.start_date.errors }}
+                                        {{ form.start_date }}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td>End date</td>
+                                {% for form in formset %}
+                                    <td>
+                                        {{ form.end_date.errors }}
+                                        {{ form.end_date }}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td>Payment day</td>
+                                {% for form in formset %}
+                                    <td>
+                                        {{ form.payment_day.errors }}
+                                        {{ form.payment_day }}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td>Type</td>
+                                {% for form in formset %}
+                                    <td>
+                                        {{ form.type.errors }}
+                                        {{ form.type }}
+                                    </td>
+                                {% endfor %}
+                            <tr>
+                                <td>Delete?</td>
+                                {% for form in formset %}
+                                    {% if form.instance.can_delete %}
+                                        <td>
+                                            {{ form.DELETE }}
+                                        </td>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                            <tr><td><input type="submit" value="Save"></td></tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+

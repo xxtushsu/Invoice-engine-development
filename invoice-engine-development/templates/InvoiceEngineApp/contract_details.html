@@ -1,0 +1,336 @@
+{% extends 'InvoiceEngineApp/base.html' %}
+
+{% block navbar %}
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'component_create' company_id object.contract_id %}">Create new component</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" aria-current="page" href="{% url 'contract_list' company_id %}">Contract list</a>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {# General information section #}
+        <h2 style="padding: 15px">General information</h2>
+        <div class="card shadow p-3 mb-5 bg-body rounded">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td>Company</td>
+                                        <td>{{object.tenancy}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Contract Type</td>
+                                        <td>{{object.contract_type}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoicing Period</td>
+                                        <td>{{object.get_period}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoicing Amount of Days</td>
+                                        <td>{{object.invoicing_amount_of_days}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>External Customer ID</td>
+                                        <td>{{object.external_customer_id}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Status</td>
+                                        <td>{{object.get_status}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td>Start Date</td>
+                                        <td>{{object.start_date}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Termination Date</td>
+                                        <td>{{object.termination_date}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>End Date</td>
+                                        <td>{{object.end_date}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Previous Invoicing Date</td>
+                                        <td>{{object.date_prev_prolongation}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Next Invoicing Date</td>
+                                        <td>{{object.date_next_prolongation}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>GL Dimension 1</td>
+                                        <td>{{object.gl_dimension_1}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td>GL Dimension 2</td>
+                                        <td>{{object.gl_dimension_2}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Balance</td>
+                                        <td style="text-align: right">€{{object.balance}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Base Amount</td>
+                                        <td style="text-align: right">€{{object.base_amount}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>VAT Amount</td>
+                                        <td style="text-align: right">€{{object.vat_amount}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total Amount</td>
+                                        <td style="text-align: right">€{{object.total_amount}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <ul class="nav">
+                        {% if object.can_update %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'contract_update' company_id object.contract_id %}">Update</a>
+                            </li>
+                        {% endif %}
+                        {% if object.can_delete %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'contract_delete' company_id object.contract_id %}">Delete</a>
+                            </li>
+                        {% endif %}
+                        {% if object.can_activate %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'contract_activate' company_id object.contract_id %}">Activate</a>
+                            </li>
+                        {% endif %}
+                        {% if object.can_end %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'contract_end' company_id object.contract_id %}">End</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        {# Components list section #}
+        <h2 style="padding: 15px">Components</h2>
+        <div class="card shadow p-3 mb-5 bg-body rounded">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="table-responsive">
+                            <table class="table table-borderless">
+                                {% for component in object.get_components %}
+                                    {% if forloop.first %}
+                                        <thead>
+                                            <tr class="border-bottom">
+                                                <td><p style="font-size: 20px">Base component</p></td>
+                                                <td><p style="font-size: 20px">Description</p></td>
+                                                <td><p style="font-size: 20px">VAT rate</p></td>
+                                                <td><p style="font-size: 20px">Start date</p></td>
+                                                <td><p style="font-size: 20px">End date</p></td>
+                                                <td><p style="font-size: 20px">Last invoice</p></td>
+                                                <td><p style="font-size: 20px; text-align: right">Unit ID</p></td>
+                                                <td><p style="font-size: 20px; text-align: right"># Units</p></td>
+                                                <td><p style="font-size: 20px; text-align: right">Unit price</p></td>
+                                                <td><p style="font-size: 20px; text-align: right">Base price</p></td>
+                                                <td><p style="font-size: 20px; text-align: right">VAT</p></td>
+                                                <td><p style="font-size: 20px; text-align: right">Total</p></td>
+                                                <td></td>
+                                            </tr>
+                                        </thead>
+                                    {% endif %}
+                                    <tbody>
+                                        <tr>
+                                            <td>{{ component.base_component.description }}</td>
+                                            <td>{{ component.description }}</td>
+                                            <td>{{ component.vat_rate.description }}</td>
+                                            <td>{{ component.start_date }}</td>
+                                            <td>{{ component.end_date }}</td>
+                                            <td>{{ component.date_prev_prolongation }}</td>
+                                            <td style="text-align: right">{{ component.unit_id }}</td>
+                                            <td style="text-align: right">{{ component.number_of_units }}</td>
+                                            <td style="text-align: right">€{{ component.unit_amount }}</td>
+                                            <td style="text-align: right">€{{ component.base_amount }}</td>
+                                            <td style="text-align: right">€{{ component.vat_amount }}</td>
+                                            <td style="text-align: right">€{{ component.total_amount }}</td>
+                                            <td style="text-align: center">
+                                                {% if component.can_update %}
+                                                    <a class="link-primary" href="{% url 'component_update' company_id object.contract_id component.component_id %}">Update</a>
+                                                {% endif %}
+                                                {% if component.can_delete %}
+                                                    <a class="link-primary" href="{% url 'component_delete' company_id object.contract_id component.component_id %}">Delete</a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                {% empty %}
+                                    <h5>No registered components</h5>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Contract persons list section #}
+        <h2 style="padding: 15px">Persons</h2>
+        <div class="card shadow p-3 mb-5 bg-body rounded">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="table-responsive">
+                            <table class="table table-borderless">
+                                {% for person in object.get_contract_persons %}
+                                    {% if forloop.first %}
+                                        <thead>
+                                            <tr class="border-bottom">
+                                                <td><p style="font-size: 20px">Name</p></td>
+                                                <td><p style="font-size: 20px">Address</p></td>
+                                                <td><p style="font-size: 20px">City</p></td>
+                                                <td><p style="font-size: 20px; text-align: right">%</p></td>
+                                                <td><p style="font-size: 20px">Method</p></td>
+                                                <td><p style="font-size: 20px">IBAN</p></td>
+                                                <td><p style="font-size: 20px; text-align: right">Mandate</p></td>
+                                                <td><p style="font-size: 20px">Email</p></td>
+                                                <td><p style="font-size: 20px">Phone</p></td>
+                                                <td><p style="font-size: 20px">Start</p></td>
+                                                <td><p style="font-size: 20px">End</p></td>
+                                                <td><p style="font-size: 20px; text-align: right">Day</p></td>
+                                                <td><p style="font-size: 20px">Type</p></td>
+                                            </tr>
+                                        </thead>
+                                    {% endif %}
+                                    <tbody>
+                                        <tr>
+                                            <td>{{ person.name }}</td>
+                                            <td>{{ person.address }}</td>
+                                            <td>{{ person.city }}</td>
+                                            <td style="text-align: right">{{ person.percentage_of_total }}%</td>
+                                            <td>{{ person.payment_method }}</td>
+                                            <td>{{ person.iban }}</td>
+                                            <td style="text-align: right">{{ person.mandate }}</td>
+                                            <td>{{ person.email }}</td>
+                                            <td>{{ person.phone }}</td>
+                                            <td>{{ person.start_date }}</td>
+                                            <td>{{ person.end_date }}</td>
+                                            <td style="text-align: right">{{ person.payment_day }}</td>
+                                            <td>{{ person.type }}</td>
+                                        </tr>
+                                    </tbody>
+                                {% empty %}
+                                    <h5>No registered persons</h5>
+                                {% endfor %}
+                            </table>
+                        </div>
+                        {% if object.can_update %}
+                            <a class="link-primary" href="{% url 'contract_person_update' company_id object.contract_id %}">Manage</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Invoices section (paginated) #}
+        <h2 style="padding: 15px">Invoices</h2>
+        <div class="card shadow p-3 mb-5 bg-body rounded">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="table-responsive">
+                            <table class="table table-borderless">
+                                {% for invoice in object.get_invoices %}
+                                    {% if forloop.first %}
+                                        <thead>
+                                            <tr class="border-bottom">
+                                                <td><p style="font-size: 20px; text-align: right">Number</p></td>
+                                                <td><p style="font-size: 20px">Description</p></td>
+                                                <td><p style="font-size: 20px">Date</p></td>
+                                                <td><p style="font-size: 20px">Expiration date</p></td>
+                                                <td><p style="font-size: 20px; text-align: right">Customer ID</p></td>
+                                                <td><p style="font-size: 20px">General ledger account</p></td>
+                                                <td><p style="font-size: 20px; text-align: right">Base amount</p></td>
+                                                <td><p style="font-size: 20px; text-align: right">VAT</p></td>
+                                                <td><p style="font-size: 20px; text-align: right">Total</p></td>
+                                                <td><p style="font-size: 20px; text-align: right">Balance</p></td>
+                                                <td><p style="font-size: 20px; text-align: center">Paid</p></td>
+                                                <td></td>
+                                            </tr>
+                                        </thead>
+                                    {% endif %}
+                                    <tbody>
+                                        <tr>
+                                            <td style="text-align: right">{{ invoice.invoice_number }}</td>
+                                            <td>{{ invoice.description }}</td>
+                                            <td>{{ invoice.date }}</td>
+                                            <td>{{ invoice.expiration_date }}</td>
+                                            <td style="text-align: right">{{ invoice.external_customer_id }}</td>
+                                            <td>{{ invoice.gl_account }}</td>
+                                            <td style="text-align: right">€{{ invoice.base_amount }}</td>
+                                            <td style="text-align: right">€{{ invoice.vat_amount }}</td>
+                                            <td style="text-align: right">€{{ invoice.total_amount }}</td>
+                                            <td style="text-align: right">€{{ invoice.balance }}</td>
+                                            <td style="text-align: center;">Unimplemented</td>
+                                            <td>
+                                                <a class="link-primary" href="{% url 'invoice_details' company_id invoice.invoice_id %}">Details</a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                {% empty %}
+                                    <h5>No registered invoices</h5>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create the pagination back and next links  -->
+    <div class="col">
+        <div class="pagination" style="padding-left: 15px; padding-bottom: 15px">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">&laquo; first</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+{% endblock %}

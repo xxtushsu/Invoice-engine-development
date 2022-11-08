@@ -1,0 +1,76 @@
+{% extends 'InvoiceEngineApp/base.html' %}
+
+{% block navbar %}
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'tenancy_list'%}">Company list</a>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div class="card shadow p-3 mb-5 bg-body rounded">
+        <div class="card-body">
+            <div class="row">
+                <div class="col">
+                    <div class="table-responsive">
+                        <table class="table table-borderless">
+                            <thead>
+                                <tr class="border-bottom">
+                                    <td style="text-align: right"><p style="font-size: 20px">Invoice Number</p></td>
+                                    <td><p style="font-size: 20px">Description</p></td>
+                                    <td><p style="font-size: 20px">Date</p></td>
+                                    <td><p style="font-size: 20px">Expiration Date</p></td>
+                                    <td style="text-align: right"><p style="font-size: 20px">Customer ID</p></td>
+                                    <td><p style="font-size: 20px">General ledger account</p></td>
+                                    <td style="text-align: right"><p style="font-size: 20px">Base amount</p></td>
+                                    <td style="text-align: right"><p style="font-size: 20px">VAT</p></td>
+                                    <td style="text-align: right"><p style="font-size: 20px">Total amount</p></td>
+                                    <td style="text-align: right"><p style="font-size: 20px">Balance</p></td>
+                                    <td style="text-align: center"><p style="font-size: 20px">Payment Received</p></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for object in page_obj %}
+                                    <tr>
+                                        <td style="text-align: right">{{ object.invoice_number }}</td>
+                                        <td>{{ object.description }}</td>
+                                        <td>{{ object.date }}</td>
+                                        <td>{{ object.expiration_date }}</td>
+                                        <td style="text-align: right">{{ object.external_customer_id }}</td>
+                                        <td>{{ object.gl_account }}</td>
+                                        <td style="text-align: right">€{{ object.base_amount }}</td>
+                                        <td style="text-align: right">€{{ object.vat_amount }}</td>
+                                        <td style="text-align: right">€{{ object.total_amount }}</td>
+                                        <td style="text-align: right">€{{ object.balance }}</td>
+                                        <td style="text-align: center">Unimplemented</td>
+                                        <td><a class="link-primary" href="{% url 'invoice_details' company_id object.invoice_id %}">Details</a></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create the pagination back and next links  -->
+    <div class="col">
+        <div class="pagination" style="padding-left: 15px; padding-bottom: 15px">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">&laquo; first</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+{% endblock %}

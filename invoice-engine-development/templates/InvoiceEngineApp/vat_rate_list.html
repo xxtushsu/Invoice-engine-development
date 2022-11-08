@@ -1,0 +1,84 @@
+{% extends 'InvoiceEngineApp/base.html' %}
+
+{% block navbar %}
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'vat_rate_create' company_id %}">Create new VAT rate</a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'tenancy_list'%}">Company list</a>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div class="card shadow p-3 mb-5 bg-body rounded">
+        <div class="card-body">
+            <div class="row">
+                <div class="col">
+                    <div class="table-responsive">
+                        <table class="table table-borderless">
+                            {% for object in page_obj %}
+                                {% if forloop.first %}
+                                    <thead>
+                                        <tr class="border-bottom">
+                                            <td><p style="font-size: 20px">Type</p></td>
+                                            <td><p style="font-size: 20px">Description</p></td>
+                                            <td style="text-align: right"><p style="font-size: 20px">Percentage</p></td>
+                                            <td><p style="font-size: 20px">Start date</p></td>
+                                            <td><p style="font-size: 20px">End date</p></td>
+                                            <td><p style="font-size: 20px">General ledger account</p></td>
+                                            <td><p style="font-size: 20px">General ledger dimension</p></td>
+                                            <td></td>
+                                        </tr>
+                                    </thead>
+                                {% endif %}
+                                <tbody>
+                                    <tr>
+                                        <td>{{ object.type }}</td>
+                                        <td>{{ object.description }}</td>
+                                        <td style="text-align: right">{{ object.percentage }}%</td>
+                                        <td>{{ object.start_date }}</td>
+                                        <td>{{ object.end_date }}</td>
+                                        <td>{{ object.gl_account }}</td>
+                                        <td>{{ object.gl_dimension }}</td>
+                                        <td style="text-align: center">
+                                            {% if object.can_update %}
+                                                <a class="link-primary" href="{% url 'vat_rate_update' company_id object.vat_rate_id %}">Update</a>
+                                            {% endif %}
+                                            {% if object.can_delete %}
+                                                <a class="link-primary" href="{% url 'vat_rate_delete' company_id object.vat_rate_id %}">Delete</a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            {% empty %}
+                                <h5>No registered VAT rates</h5>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create the pagination back and next links  -->
+    <div class="col">
+        <div class="pagination" style="padding-left: 15px; padding-bottom: 15px">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">&laquo; first</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+{% endblock %}
